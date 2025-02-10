@@ -47,20 +47,21 @@ const FileUploadArea = ({
   showDropzone,
   disabled,
   theme,
-}: Props): React.ReactElement =>
-  showDropzone ? (
+}: Props): React.ReactElement => {
+  const fileLabel =
+    acceptFile === AcceptFileValue.Multiple ? "files" : "a file"
+
+  return showDropzone ? (
     <StyledFileUploadDropzone {...getRootProps()}>
       <input {...getInputProps()} />
-      Drag and drop files here
+      {`Drag and drop ${fileLabel} here`}
     </StyledFileUploadDropzone>
   ) : (
     <StyledFileUploadArea>
       <div data-testid="stChatInputFileUploadButton" {...getRootProps()}>
         <input {...getInputProps()} />
         <TooltipIcon
-          content={`Upload or drag and drop ${
-            acceptFile === AcceptFileValue.Multiple ? "files" : "a file"
-          }`}
+          content={`Upload or drag and drop ${fileLabel}`}
           placement={Placement.TOP}
         >
           <BaseButton kind={BaseButtonKind.MINIMAL} disabled={disabled}>
@@ -75,5 +76,6 @@ const FileUploadArea = ({
       <StyledVerticalDivider />
     </StyledFileUploadArea>
   )
+}
 
 export default FileUploadArea

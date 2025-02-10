@@ -329,6 +329,40 @@ def test_uploads_and_deletes_multiple_files(
     expect(uploaded_file_names).to_have_text(files[1]["name"], use_inner_text=True)
 
 
+def test_chat_input_drag_text(app: Page, assert_snapshot: ImageCompareFunction):
+    """Test that correct text is shown when dragging files."""
+
+    # chat_input = app.get_by_test_id("stChatInput")
+
+    # Create DataTransfer object to simulate file drag
+    data_transfer = {
+        "files": [
+            {"name": "test.txt", "type": "text/plain"},
+        ]
+    }
+
+    # Simulate single file drag
+    app.dispatch_event(
+        "body",
+        "dragover",
+        data_transfer,
+    )
+    chat_input_single = app.locator(".dropzone").nth(0)
+    expect(chat_input_single).to_contain_text("Drag and drop a file here")
+    assert_snapshot(chat_input_single, name="st_chat_input-single_file_dropzone")
+
+    app.dispatch_event("body", "dragleave")
+
+    # Simulate multiple files drag
+    data_transfer["files"].append({"name": "test2.txt", "type": "text/plain"})
+    app.dispatch_event("body", "dragenter", data_transfer)
+    chat_input_multi = app.locator(".dropzone").nth(1)
+    expect(chat_input_multi).to_contain_text("Drag and drop files here")
+    assert_snapshot(chat_input_multi, name="st_chat_input-multi_file_dropzone")
+
+    app.dispatch_event("body", "dragleave")
+
+
 def test_check_top_level_class(app: Page):
     """Check that the top level class is correctly set."""
     check_top_level_class(app, "stChatInput")
